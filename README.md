@@ -1,0 +1,2 @@
+# jswm
+javascript window manager
