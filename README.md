@@ -1,2 +1,2 @@
-# jswm
-javascript window manager
+# JSWM
+standalone js window manager
