@@ -25,8 +25,10 @@ body {margin:0px;padding:0px;background-color:#0f0;width:100%;height:100%}
 var test;
 window.addEventListener('load',function()
   {
-  test1=new jswm({id:'test',el:'jswm1',fnt:{type:'bitmap'}});
-  test2=new jswm({el:'jswm2',p:4,fnt:{type:'arial',size:13,h:13}});
+  test1=new jswm({id:'test',el:'jswm1',dbg:true,fnt:{type:'bitmap,monospace'}});
+  test2=new jswm({el:'jswm2',p:4,fnt:{type:'helvetica,arial',size:14,h:14}});
+  test1.wdw.add(test1.cfg,{x:'60%',y:'20%',w:256,h:128});
+  test2.wdw.add(test2.cfg,{x:'4%',y:'4%',w:'92%',h:'92%'});
   },false);
 </script>
 </head>
