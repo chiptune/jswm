@@ -15,7 +15,8 @@
 <meta name="description" content="javascript window manager">
 <meta name="robots" content="nofollow noindex noarchive">
 <style type="text/css">
-@font-face {font-family:'bitmap';src:url('liquid_kidz.ttf') format('truetype');font-weight:normal;font-style:normal;font-smooth:never;-webkit-font-smoothing:none}
+@font-face {font-family:bitmap;src:url('liquid_kidz.ttf') format('truetype');font-weight:normal;font-style:normal;font-smooth:never}
+/*@font-face {font-family:bitmap;src:url('press_start_2p.ttf') format('truetype');font-weight:normal;font-style:normal;font-smooth:never}*/
 html {width:100%;height:100%;overflow:hidden}
 body {margin:0px;padding:0px;background-color:#0f0;width:100%;height:100%}
 </style>
@@ -25,10 +26,17 @@ body {margin:0px;padding:0px;background-color:#0f0;width:100%;height:100%}
 var test;
 window.addEventListener('load',function()
   {
-  test1=new jswm({id:'test',el:'jswm1',dbg:true,fnt:{type:'bitmap,monospace'}});
-  test2=new jswm({el:'jswm2',p:4,fnt:{type:'helvetica,arial',size:14,h:14}});
-  test1.wdw.add(test1.cfg,{x:'60%',y:'20%',w:256,h:128});
-  test2.wdw.add(test2.cfg,{x:'4%',y:'4%',w:'92%',h:'92%'});
+  test1=new jswm({id:'test',el:'jswm1',dbg:true,fnt:{f:'bitmap,monospace'}});
+  var w1=test1.wdw.add({x:'60%',y:'20%',w:312,h:256});
+  var w2=test1.wdw.add({x:'68%',y:'83%',w:'30%',h:'15%',hdr:false});
+  test1.wdw.update(w1,new Array(256).join('BADGER ')+'MUSHROOM MUSHROOM');
+  test1.wdw.update(w2,'this is a headerless window');
+  test2=new jswm({el:'jswm2',p:4,save:false,fnt:{f:'helvetica,arial',s:13}});
+  test1.vs.add({txt:'foo'});
+  test1.vs.add({txt:'bar'});
+  test1.vs.toggle(1);
+  var lol=test2.wdw.add({txt:'this is a title',x:'10%',y:'10%',w:'80%',h:'80%'});
+  test2.wdw.update(lol,'<div style="left:8px;top:8px;font:bold 32px/100% monospace;letter-spacing:-3px">LOL</div>');
   },false);
 </script>
 </head>
