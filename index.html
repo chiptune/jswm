@@ -30,15 +30,16 @@ window.addEventListener('load',function()
   test1.vs.add(2,{txt:'foo'});
   test1.vs.add(3,{txt:'bar'});
   test1.vs.toggle(1);
-  var lol=test1.wdw.add({id:'lol',txt:'this is a title',x:4,y:-64,w:384,h:60,m:8});
+  var lol=test1.wdw.add({id:'lol',txt:'LOL',x:4,y:-66,w:384,h:62,m:8});
   test1.wdw.update(lol,'<div style="left:8px;top:8px;font:bold 32px/100% monospace;letter-spacing:-3px">LOL</div>');
-  var w1=test1.wdw.add({id:'BADGER',x:'55%',y:'5%',w:314,h:258,m:2});
-  var w2=test1.wdw.add({id:'w2',x:-132,y:'95%',w:200,h:18,m:4,hdr:false});
-  var w3=test1.wdw.add({x:'60%',y:'55%',w:'35%',h:'35%'});
-  test1.wdw.update(w1,new Array(256).join('BADGER ')+'MUSHROOM MUSHROOM');
-  test1.wdw.update(w2,'this is a headerless window');
+  var w1=test1.wdw.add({id:'BADGER',x:'40%',y:'5%',w:426,h:258,m:2});
+  var w2=test1.wdw.add({id:'w2',x:-132,y:'90%',w:128,h:34,m:4,hdr:false});
+  var w3=test1.wdw.add({id:'BLA',x:'55%',y:'55%',w:'40%',h:'30%',m:4});
+  test1.wdw.update(w1,new Array(512).join('BADGER ')+'MUSHROOM MUSHROOM');
+  test1.wdw.update(w2,'<div style="font:italic 24px/24px serif;letter-spacing:-1.5px">\u03c0 = '+String(test1.pi(128).toFixed(6))+'</div>');
+  test1.wdw.update(w3,new Array(32).join('bla&nbsp;'));
   test2=new jswm({root:'jswm2',m:4,b:4,save:false,fnt:{f:'helvetica,arial',s:14}});
-  var w4=test2.wdw.add({id:'w4',txt:'jswm inception',x:'5%',y:'5%',w:'90%',h:'90%'});
+  var w4=test2.wdw.add({id:'w4',txt:'jswm inception',x:'5%',y:'5%',w:'90%',h:'90%',exp:true});
   var test3=new jswm({id:'jswm3',root:w4+'-bgd',dbg:true});
   },false);
 </script>
