@@ -59,7 +59,7 @@ wm.prototype=
 
 wm.ver=
   {
-  maj:0,min:1,build:15,alpha:true,beta:false,
+  maj:0,min:1,build:16,alpha:true,beta:false,
   get:function()
     {
     var ver=this.maj+'.'+this.min+'.'+this.build;
@@ -72,16 +72,18 @@ wm.id=function(cfg){cfg.n=wm.int.test(cfg.n)+1;return cfg.n;};
 
 wm.dflt=function(cfg)
   {
+  cfg=wm.obj.test(cfg);
   cfg.fnt=wm.obj.test(cfg.fnt);
   return wm.obj.merge(cfg,
     {
     id:wm.str.test(cfg.id,wm.str.rnd(8)),
-    root:wm.str.test(cfg.root), /* root id */
+    root:wm.str.test(cfg.root),
     m:wm.int.test(cfg.m,2), /* margin */
     b:wm.int.test(cfg.b,1), /* border */
+    r:wm.int.test(cfg.r,3), /* radius */
     fnt:
       {
-      f:wm.str.test(cfg.fnt.f,'bitmap,monospace'),
+      f:wm.str.test(cfg.fnt.f,'monospace'),
       s:wm.nbr.test(cfg.fnt.s,8),
       h:wm.nbr.test(cfg.fnt.h,wm.nbr.test(cfg.fnt.s,8)+1),
       m:wm.int.test(cfg.fnt.m,2)
@@ -92,35 +94,61 @@ wm.dflt=function(cfg)
     });
   };
 /*----------------------------------------------------------------------------*/
-wm.tt=function(cfg)
+wm.tt={};
+
+wm.tt.btn=function(cfg)
   {
   cfg.tt=!wm.bool.test(cfg.tt);
-  var btn=_i('tooltip-'+cfg.id);
+  var btn=_i(cfg.id+'-tt-btn');
   if(wm.el.test(btn))
     {
     btn.style.backgroundPosition='-'+((cfg.tt?2:1)*wm.img.sta.h)+_u+' 0'+_u;
     }
-  if(cfg.tt){wm.tt.set(cfg,'LOL');}
+  wm.tt.upd(cfg,'tooltip');
   };
 
-wm.tt.set=function(cfg,txt)
+wm.tt.upd=function(cfg,txt)
   {
-  var root=_i(cfg.root); if(!wm.el.test(root)){return false;}
-  var tt=_i(cfg.id+'-tt'); if(wm.el.test(tt)){_r(tt);}
+  txt=wm.str.test(txt);
+  var tt=_i(cfg.id+'-tt');
+  if(wm.el.test(tt)){_r(tt);}
+  if(!wm.bool.test(cfg.tt)||txt===''){return false;}
   tt=_e('div');
-  tt.style.left=32+_u;
-  tt.style.top=32+_u;
+  tt.id=cfg.id+'-tt';
+  tt.style.position='absolute';
+  tt.style.borderRadius=cfg.r+_u;
+  tt.style.padding=cfg.m+_u;
   tt.style.backgroundColor=wm.col.format('hdr');
-  tt.color=wm.col.format('bdr');
-  tt.zIndex=1024;
-  tt.appendChild(_t(wm.str.test(txt)));
-  root.appendChild(tt);
+  tt.style.color=wm.col.format('bdr');
+  tt.style.zIndex=1024;
+  tt.innerHTML=txt;
+  var root=_i(cfg.root);
+  if(wm.el.test(root))
+    {
+    root.appendChild(tt);
+    wm.tt.mv(cfg);
+    }
+  };
+
+wm.tt.mv=function(cfg)
+  {
+  if(!wm.bool.test(cfg.tt)){return false;}
+  var root=_i(cfg.root);
+  var tt=_i(cfg.id+'-tt');
+  if(!wm.el.test(root)||!wm.el.test(tt)){return false;}
+  var x=wm.mse.x+12;
+  var y=wm.mse.y;
+  var w=tt.offsetWidth;
+  var h=tt.offsetHeight;
+  if(x+w>root.offsetWidth){x=wm.mse.x-w-12;}
+  tt.style.left=wm.math.clamp(x,0,root.offsetWidth-w)+_u;
+  tt.style.top=wm.math.clamp(y,0,root.offsetHeight-h)+_u;
   };
 /*----------------------------------------------------------------------------*/
 wm.dbg=function(cfg)
   {
   cfg.dbg=!wm.bool.test(cfg.dbg);
-  var btn=_i('debug-'+cfg.id);
+  var btn=_i(cfg.id+'-dbg-btn');
   if(wm.el.test(btn))
     {
     btn.style.backgroundPosition='-'+((cfg.dbg?4:3)*wm.img.sta.h)+_u+' 0'+_u;
@@ -159,18 +187,18 @@ wm.init=function(cfg)
   sta.style.backgroundColor=wm.col.format('bdr');
   sta.style.color=wm.col.format('hdr');
   sta.style.overflow='hidden';
-  var btn=wm.btn('reset-'+cfg.id,'sta',0);
+  var btn=wm.btn(cfg,cfg.id+'-rst','sta',0,'reset');
   btn.style.top=cfg.m+_u;
   sta.appendChild(btn);
-  btn.addEventListener('mouseup',wm.ls.reset.bind(null,cfg));
-  btn=wm.btn('tooltip-'+cfg.id,'sta',cfg.tt?2:1);
+  btn.addEventListener('mouseup',function(){wm.ls.rst(cfg);});
+  btn=wm.btn(cfg,cfg.id+'-tt','sta',cfg.tt?2:1,'tooltip');
   btn.style.top=cfg.m+_u;
   sta.appendChild(btn);
-  btn.addEventListener('mouseup',wm.tt.bind(null,cfg));
-  btn=wm.btn('debug-'+cfg.id,'sta',cfg.dbg?4:3);
+  btn.addEventListener('mouseup',function(){wm.tt.btn(cfg);});
+  btn=wm.btn(cfg,cfg.id+'-dbg','sta',cfg.dbg?4:3,'debug');
   btn.style.top=cfg.m+_u;
   sta.appendChild(btn);
-  btn.addEventListener('mouseup',wm.dbg.bind(null,cfg));
+  btn.addEventListener('mouseup',function(){wm.dbg(cfg);});
   root.appendChild(sta);
   /* screen */
   wm.vs.add(cfg,1);
@@ -185,7 +213,9 @@ wm.init=function(cfg)
     ico.style.margin=cfg.m+_u;
     ico.style.cursor='pointer';
     var p={x:'5%',y:'5%',w:'10%',h:'5%'};
-    ico.addEventListener('mouseup',wm.wdw.add.bind(null,cfg,p));
+    ico.addEventListener('mouseup',function(){wm.wdw.add(cfg,p);});
+    ico.addEventListener('mouseover',function(){wm.tt.upd(cfg,'new window');});
+    ico.addEventListener('mouseout',function(){wm.tt.upd(cfg);});
     el.appendChild(ico);
     //el.appendChild(_t(html));
     }
@@ -194,14 +224,13 @@ wm.init=function(cfg)
   wm.arr.test(cfg.vs).forEach(function(v){wm.vs.add(cfg,v.n,v);});
   wm.arr.test(cfg.wdw).forEach(function(v){wm.wdw.add(cfg,v);});
   cfg.dbg=!cfg.dbg; wm.dbg(cfg);
-  _w.addEventListener('resize',wm.rsz.bind(null,cfg));
-  _w.addEventListener('mousedown',wm.mse.down.bind(null,null,cfg));
-  _w.addEventListener('mouseup',wm.mse.up.bind(null,null,cfg));
-  _w.addEventListener('mousemove',wm.mse.move.bind(null,null,cfg));
-  var e=wm.nav.isffx?'DOMMouseScroll':'mousewheel';
-  root.addEventListener(e,wm.mse.wheel.bind(null,null,cfg));
-  root.addEventListener('selectstart',function(){return false;});
-  root.addEventListener('dragstart',function(){return false;});
+  _w.addEventListener('resize',function(){wm.rsz(cfg);});
+  _w.addEventListener('mousemove',function(e){wm.mse.move(e,cfg);});
+  _w.addEventListener('mousedown',function(e){wm.mse.down(e,cfg);});
+  _w.addEventListener('mouseup',function(e){wm.mse.up(e,cfg);});
+  root.addEventListener('wheel',function(e){wm.mse.wheel(e,cfg);});
+  root.addEventListener('selectstart',function(e){e.preventDefault();});
+  root.addEventListener('dragstart',function(e){e.preventDefault();});
   //root.addEventListener('contextmenu',function(e){e.preventDefault();});
   };
 /*----------------------------------------------------------------------------*/
@@ -215,11 +244,11 @@ wm.sta.init=function(cfg)
   var sta=wm.sta.get(cfg);
   var w=root.offsetWidth;
   if(wm.el.test(sta)){sta.style.width=w+_u;wm.sta.dbg(cfg);}
-  var btn=_i('reset-'+cfg.id);
+  var btn=_i(cfg.id+'-rst-btn');
   if(wm.el.test(btn)){btn.style.left=(w-wm.img.sta.h-cfg.m)+_u;}
-  btn=_i('tooltip-'+cfg.id);
+  btn=_i(cfg.id+'-tt-btn');
   if(wm.el.test(btn)){btn.style.left=(w-(wm.img.sta.h+cfg.m)*2)+_u;}
-  btn=_i('debug-'+cfg.id);
+  btn=_i(cfg.id+'-dbg-btn');
   if(wm.el.test(btn)){btn.style.left=(w-(wm.img.sta.h+cfg.m)*3)+_u;}
   };
 
@@ -286,14 +315,14 @@ wm.vs.add=function(cfg,n,p)
   /* status button */
   var x=cfg.vs.length;
   cfg.vs.forEach(function(v,i){if(v.n===n){x=i;}});
-  var btn=wm.btn(id+'-btn','vs');
+  var btn=wm.btn(cfg,id,'vs',0,txt);
   btn.style.left=(cfg.m+x*(wm.img.vs.h+cfg.m))+_u;
   btn.style.top=cfg.m+_u;
   var sta=wm.sta.get(cfg);
   if(wm.el.test(sta))
     {
     sta.appendChild(btn);
-    btn.addEventListener('mouseup',wm.vs.toggle.bind(null,cfg,n));
+    btn.addEventListener('mouseup',function(){wm.vs.toggle(cfg,n);});
     }
   /* init */
   root.appendChild(vs);
@@ -381,6 +410,7 @@ wm.wdw.add=function(cfg,p)
   var rsz=wm.bool.test(p.rsz,true);
   var txt=wm.str.test(p.txt,id);
   var m=wm.int.test(p.m);
+  var r=wm.math.clamp(cfg.r-cfg.b*2,0);
   var z=null;
   cfg.wdw.forEach(function(v){if(v.id===id){z=v.z;}});
   z=wm.int.test(z,cfg.wdw.length+1);
@@ -389,12 +419,13 @@ wm.wdw.add=function(cfg,p)
   var wdw=_e('div');
   wdw.id=id;
   wdw.style.position='absolute';
+  wdw.style.borderRadius=cfg.r+_u;
   wdw.style.backgroundColor=wm.col.format('bdr');
   wdw.style.overflow='hidden';
   wdw.style.zIndex=z;
   wdw.addEventListener('mouseover',function(){cfg.wid=id;});
   wdw.addEventListener('mouseout',function(){cfg.wid=false;});
-  wdw.addEventListener('mousedown',wm.wdw.z.bind(null,cfg,id));
+  wdw.addEventListener('mousedown',function(){wm.wdw.z(cfg,id);});
   /* header */
   if(hdr){wdw.appendChild(wm.wdw.hdr(cfg,id,txt,exp));}
   /* background */
@@ -403,6 +434,7 @@ wm.wdw.add=function(cfg,p)
   bgd.style.position='absolute';
   bgd.style.left=cfg.b+_u;
   bgd.style.top=(hdr?cfg.fnt.s+cfg.m*2:cfg.b)+_u;
+  bgd.style.borderRadius='0 0 '+r+_u+' '+r+_u;
   bgd.style.backgroundColor=wm.col.format('wdw');
   bgd.style.overflow='hidden';
   wdw.appendChild(bgd);
@@ -417,10 +449,10 @@ wm.wdw.add=function(cfg,p)
   /* buttons */
   if(rsz)
     {
-    var btn=wm.btn(id+'-rsz','btn',4);
+    var btn=wm.btn(cfg,id+'-rsz','btn',4,'resize');
     btn.style.cursor='nwse-resize';
-    btn.style.zIndex=1;
-    btn.addEventListener('mousedown',wm.wdw.rsz.down.bind(null,cfg,id));
+    btn.style.borderRadius='0 0 '+cfg.r+_u+' 0';
+    btn.addEventListener('mousedown',function(){wm.wdw.rsz.down(cfg,id);});
     wdw.appendChild(btn);
     }
   /* init */
@@ -451,6 +483,7 @@ wm.wdw.hdr=function(cfg,id,name,exp)
   hdr.id=id+'-hdr';
   hdr.style.position='absolute';
   hdr.style.height=(cfg.fnt.s+cfg.m*2)+_u;
+  hdr.style.borderRadius=cfg.r+_u;
   hdr.style.backgroundColor=wm.col.format('bdr');
   /* title */
   var txt=_e('div');
@@ -466,21 +499,21 @@ wm.wdw.hdr=function(cfg,id,name,exp)
   txt.style.cursor='move';
   txt.appendChild(_t(name));
   hdr.appendChild(txt);
-  txt.addEventListener('mousedown',wm.wdw.mv.down.bind(null,cfg,id));
+  txt.addEventListener('mousedown',function(){wm.wdw.mv.down(cfg,id);});
   /* buttons */
-  var btn=wm.btn(id+'-ctx','btn');
+  var btn=wm.btn(cfg,id+'-ctx','btn',0);
   btn.style.top=cfg.m+_u;
   btn.style.left=cfg.m+_u;
   btn.style.cursor='context-menu';
-  //btn.addEventListener('mouseup',wm.wdw.ctx.bind(null,cfg,id));
+  //btn.addEventListener('mouseup',function(){wm.wdw.ctx(cfg,id);});
   hdr.appendChild(btn);
-  btn=wm.btn(id+'-del','btn',1);
+  btn=wm.btn(cfg,id+'-del','btn',1,'close');
   btn.style.top=cfg.m+_u;
-  btn.addEventListener('mouseup',wm.wdw.del.bind(null,cfg,id));
+  btn.addEventListener('mouseup',function(){wm.wdw.del(cfg,id);});
   hdr.appendChild(btn);
-  btn=wm.btn(id+'-exp','btn',exp?3:2);
+  btn=wm.btn(cfg,id+'-exp','btn',exp?3:2,exp?'shrink':'expand');
   btn.style.top=cfg.m+_u;
-  btn.addEventListener('mousedown',wm.wdw.exp.down.bind(null,cfg,id));
+  btn.addEventListener('mousedown',function(){wm.wdw.exp.down(cfg,id);});
   hdr.appendChild(btn);
   return hdr;
   };
@@ -515,7 +548,7 @@ wm.wdw.init=function(cfg,id)
     con.style.left=-wm.int.test(wdw.sbh)+_u;
     con.style.top=-wm.int.test(wdw.sbv)+_u;
     }
-  var btn=_i(id+'-rsz');
+  var btn=_i(id+'-rsz-btn');
   if(wm.el.test(btn))
     {
     btn.style.left=(w-cfg.b-wm.img.btn.h)+_u;
@@ -531,9 +564,9 @@ wm.wdw.init=function(cfg,id)
       txt.style.width=(w-cfg.m*2-3*(wm.img.btn.h+cfg.m))+_u;
       }
     wm.wdw.dbg(cfg,id);
-    btn=_i(id+'-del');
+    btn=_i(id+'-del-btn');
     if(wm.el.test(btn)){btn.style.left=(w-cfg.m-wm.img.btn.h)+_u;}
-    btn=_i(id+'-exp');
+    btn=_i(id+'-exp-btn');
     if(wm.el.test(btn)){btn.style.left=(w-(cfg.m+wm.img.btn.h)*2)+_u;}
     }
   wm.sb.v.init(cfg,id);
@@ -645,7 +678,7 @@ wm.wdw.exp=
     {
     var wdw=wm.wdw.get(cfg,id);
     wdw.exp=!wm.bool.test(wdw.exp);
-    var btn=_i(id+'-exp');
+    var btn=_i(id+'-exp-btn');
     if(wm.el.test(btn))
       {
       btn.style.backgroundPosition='-'+((wdw.exp?3:2)*wm.img.btn.h)+_u+' 0'+_u;
@@ -681,6 +714,7 @@ wm.wdw.del=function(cfg,id)
     {
     el.style.display='none';
     _r(el);
+    wm.tt.upd(cfg);
     var n=0;
     var z=wdw.z;
     cfg.wdw.forEach(function(v,i)
@@ -808,6 +842,7 @@ wm.sb.v.init=function(cfg,id)
   var bar=_i(id+'-sbv'); if(wm.el.test(bar)){_r(bar);}
   if(con.offsetHeight<=bgd.offsetHeight)
     {
+    con.style.top=0+_u;
     con.style.paddingRight=0+_u;
     return false;
     }
@@ -823,29 +858,30 @@ wm.sb.v.init=function(cfg,id)
   bar.style.top=cfg.b+_u;
   bar.style.width=wm.img.btn.h+_u;
   bar.style.height=t+_u;
+  bar.style.borderRadius=cfg.r+_u;
+  bar.style.backgroundColor=wm.col.format('bgd');
   var btn=_e('div');
   btn.id=id+'-sbv-btn';
   btn.style.position='absolute';
   btn.style.width=wm.img.btn.h+_u;
   btn.style.height=h+_u;
+  btn.style.borderRadius=cfg.r+_u;
   btn.style.backgroundColor=wm.col.format('bdr');
   btn.style.cursor='ns-resize';
-  btn.addEventListener('mousedown',wm.sb.v.down.bind(null,cfg,id));
+  btn.addEventListener('mousedown',function(){wm.sb.v.down(cfg,id);});
   var up=_e('div');
   up.id=id+'-sbv-pgup';
   up.style.position='absolute';
   up.style.width=wm.img.btn.h+_u;
-  up.style.backgroundColor=wm.col.format('bgd');
   up.style.cursor='pointer';
-  up.addEventListener('mousedown',wm.sb.v.pgup.bind(null,cfg,id));
+  up.addEventListener('mousedown',function(){wm.sb.v.pgup(cfg,id);});
   var dwn=_e('div');
   dwn.id=id+'-sbv-pgdown';
   dwn.style.position='absolute';
   dwn.style.top=(y+h)+_u;
   dwn.style.width=wm.img.btn.h+_u;
-  dwn.style.backgroundColor=wm.col.format('bgd');
   dwn.style.cursor='pointer';
-  dwn.addEventListener('mousedown',wm.sb.v.pgdown.bind(null,cfg,id));
+  dwn.addEventListener('mousedown',function(){wm.sb.v.pgdown(cfg,id);});
   bar.appendChild(btn);
   bar.appendChild(up);
   bar.appendChild(dwn);
@@ -914,6 +950,7 @@ wm.sb.h.init=function(cfg,id)
   var bar=_i(id+'-sbh'); if(wm.el.test(bar)){_r(bar);}
   if(con.offsetWidth<=bgd.offsetWidth)
     {
+    con.style.left=0+_u;
     con.style.marginBottom=0+_u;
     return false;
     }
@@ -929,29 +966,30 @@ wm.sb.h.init=function(cfg,id)
   bar.style.top=(bgd.offsetHeight-wm.img.btn.h-cfg.b)+_u;
   bar.style.width=t+_u;
   bar.style.height=wm.img.btn.h+_u;
+  bar.style.borderRadius=cfg.r+_u;
+  bar.style.backgroundColor=wm.col.format('bgd');
   var btn=_e('div');
   btn.id=id+'-sbh-btn';
   btn.style.position='absolute';
   btn.style.width=w+_u;
   btn.style.height=wm.img.btn.h+_u;
+  btn.style.borderRadius=cfg.r+_u;
   btn.style.backgroundColor=wm.col.format('bdr');
   btn.style.cursor='ew-resize';
-  btn.addEventListener('mousedown',wm.sb.h.down.bind(null,cfg,id));
+  btn.addEventListener('mousedown',function(){wm.sb.h.down(cfg,id);});
   var up=_e('div');
   up.id=id+'-sbh-pgup';
   up.style.position='absolute';
   up.style.height=wm.img.btn.h+_u;
-  up.style.backgroundColor=wm.col.format('bgd');
   up.style.cursor='pointer';
-  up.addEventListener('mousedown',wm.sb.h.pgup.bind(null,cfg,id));
+  up.addEventListener('mousedown',function(){wm.sb.h.pgup(cfg,id);});
   var dwn=_e('div');
   dwn.id=id+'-sbh-pgdown';
   dwn.style.position='absolute';
   dwn.style.left=(x+w)+_u;
   dwn.style.height=wm.img.btn.h+_u;
-  dwn.style.backgroundColor=wm.col.format('bgd');
   dwn.style.cursor='pointer';
-  dwn.addEventListener('mousedown',wm.sb.h.pgdown.bind(null,cfg,id));
+  dwn.addEventListener('mousedown',function(){wm.sb.h.pgdown(cfg,id);});
   bar.appendChild(btn);
   bar.appendChild(up);
   bar.appendChild(dwn);
@@ -959,12 +997,12 @@ wm.sb.h.init=function(cfg,id)
   wm.sb.h.upd(cfg,id,x);
   };
 /*----------------------------------------------------------------------------*/
-wm.btn=function(id,img,n)
+wm.btn=function(cfg,id,img,n,tt)
   {
   img=wm.obj.test(wm.img[img]);
   n=wm.int.test(n);
   var el=_e('div');
-  el.id=id;
+  el.id=id+'-btn';
   el.style.backgroundImage='url('+img.url+')';
   el.style.backgroundPosition='-'+(img.h*n)+_u+' 0'+_u;
   el.style.position='absolute';
@@ -972,6 +1010,11 @@ wm.btn=function(id,img,n)
   el.style.height=img.h+_u;
   el.style.zIndex=1;
   el.style.cursor='pointer';
+  if(wm.str.test(tt)!=='')
+    {
+    el.addEventListener('mouseover',function(){wm.tt.upd(cfg,tt);});
+    el.addEventListener('mouseout',function(){wm.tt.upd(cfg);});
+    }
   return el;
   };
 /*----------------------------------------------------------------------------*/
@@ -1194,6 +1237,7 @@ wm.mse.down=function(e,cfg)
   wm.mse.e='down';
   wm.mse.fn(cfg);
   wm.sta.dbg(cfg);
+  e.preventDefault();
   };
 
 wm.mse.up=function(e,cfg)
@@ -1204,6 +1248,7 @@ wm.mse.up=function(e,cfg)
   wm.sta.dbg(cfg);
   delete cfg.evt;
   wm.ls.save(cfg);
+  e.preventDefault();
   };
 
 wm.mse.move=function(e,cfg)
@@ -1214,6 +1259,7 @@ wm.mse.move=function(e,cfg)
   wm.mse.e='move';
   wm.mse.fn(cfg);
   wm.sta.dbg(cfg);
+  wm.tt.mv(cfg);
   e.preventDefault();
   };
 
@@ -1221,12 +1267,23 @@ wm.mse.wheel=function(e,cfg)
   {
   e=e||_w.event;
   wm.mse.e='wheel';
-  if(wm.str.test(cfg.wid))
+  if(wm.str.test(cfg.wid)!=='')
     {
-    var y=wm.int.test(-e.wheelDelta/16);
-    var btn=_i(cfg.wid+'-sbv-btn');
-    if(wm.el.test(btn)){y+=btn.offsetTop;}
-    wm.sb.v.upd(cfg,cfg.wid,y);
+    var btn;
+    var y=wm.int.test(-e.wheelDeltaY/32);
+    if(y!==0)
+      {
+      btn=_i(cfg.wid+'-sbv-btn');
+      if(wm.el.test(btn)){y+=btn.offsetTop;}
+      wm.sb.v.upd(cfg,cfg.wid,y);
+      }
+    var x=wm.int.test(-e.wheelDeltaX/32);
+    if(x!==0)
+      {
+      btn=_i(cfg.wid+'-sbh-btn');
+      if(wm.el.test(btn)){x+=btn.offsetLeft;}
+      wm.sb.h.upd(cfg,cfg.wid,x);
+      }
     }
   e.preventDefault();
   };
@@ -1256,16 +1313,15 @@ wm.ls.save=function(cfg)
   if(wm.ls.test()&&cfg.save){_ls.setItem(cfg.id,_w.JSON.stringify(cfg));}
   };
 
-wm.ls.reset=function(cfg)
+wm.ls.rst=function(cfg)
   {
   if(!wm.ls.test()){return false;}
   delete _w.localStorage[cfg.id];
   var root=_i(cfg.root);
   if(!wm.el.test(root)){_w.location.reload();}
   var nc=wm.obj.clone(cfg);
-  String('n|evt|fnt|vs|wdw').split('|').forEach(function(v){delete nc[v];});
   while(root.firstChild){root.removeChild(root.firstChild);}
-  wm.init(nc);
+  wm.init({id:nc.id,root:nc.root});
   };
 /*----------------------------------------------------------------------------*/
 wm.col={};
