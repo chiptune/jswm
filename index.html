@@ -17,6 +17,7 @@
 <style type="text/css">
 @font-face {font-family:bitmap;src:url('liquid_kidz.ttf') format('truetype');font-weight:normal;font-style:normal;font-smooth:never}
 /*@font-face {font-family:bitmap;src:url('press_start_2p.ttf') format('truetype');font-weight:normal;font-style:normal;font-smooth:never}*/
+@font-face {font-family:gothic;src:url('luftwaffe.ttf') format('truetype');font-weight:normal;font-style:normal}
 html {width:100%;height:100%;overflow:hidden}
 body {margin:0px;padding:0px;background-color:#0f0;width:100%;height:100%}
 </style>
@@ -26,26 +27,29 @@ body {margin:0px;padding:0px;background-color:#0f0;width:100%;height:100%}
 var test1,test2,test3;
 window.addEventListener('load',function()
   {
-  test1=new jswm({id:'test',root:'jswm1',dbg:true,fnt:{f:'bitmap,monospace'}});
+  test1=new jswm({id:'test',root:'jswm1',fnt:{f:'bitmap,monospace'},stg:false,dbg:true});
   test1.vs.add(2,{txt:'foo'});
   test1.vs.add(3,{txt:'bar'});
-  test1.vs.toggle(1);
-  var lol=test1.wdw.add({id:'lol',txt:'LOL',x:4,y:-66,w:384,h:62,m:8});
+  var lol=test1.wdw.add({id:'lol',txt:'LOL',x:'1%',y:'91%',w:280,h:'8%',m:8});
   test1.wdw.update(lol,'<div style="left:8px;top:8px;font:bold 32px/100% monospace;letter-spacing:-3px">LOL</div>');
-  var w1=test1.wdw.add({id:'BADGER',x:'40%',y:'5%',w:426,h:258,m:2});
-  var w2=test1.wdw.add({id:'w2',x:-132,y:'90%',w:128,h:34,m:4,hdr:false});
+  var w1=test1.wdw.add({id:'BADGER',x:'45%',y:'5%',w:'50%',h:'40%',m:2});
+  var w2=test1.wdw.add({id:'\u03c0',x:-132,y:-38,w:128,h:34,m:4,hdr:false,rsz:false});
   var w3=test1.wdw.add({id:'BLA',x:'55%',y:'55%',w:'40%',h:'30%',m:4});
   test1.wdw.update(w1,new Array(512).join('BADGER ')+'MUSHROOM MUSHROOM');
   test1.wdw.update(w2,'<div style="font:italic 24px/24px serif;letter-spacing:-1.5px">\u03c0 = '+String(test1.pi(128).toFixed(6))+'</div>');
   test1.wdw.update(w3,new Array(32).join('bla&nbsp;'));
-  test2=new jswm({root:'jswm2',m:4,b:4,save:false,fnt:{f:'helvetica,arial',s:14}});
-  var w4=test2.wdw.add({id:'w4',txt:'jswm inception',x:'5%',y:'5%',w:'90%',h:'90%',exp:true});
-  var test3=new jswm({id:'jswm3',root:w4+'-bgd',dbg:true});
+  test2=new jswm({root:'jswm2',m:4,b:2,r:4,sav:false,fnt:{f:'helvetica,sans-serif',s:12}});
+  //test2.vs.toggle(1);
+  test2.ico.add({tt:'test',x:'2%',y:'96%'});
+  var w4=test2.wdw.add({id:'w4',txt:'jswm inception',x:'4%',y:'4%',w:'92%',h:'92%',e:{rsz:function(){jswm.rsz(jswm.get('jswm3'));}}});
+  test3=new jswm({id:'jswm3',root:w4+'-con',r:2,dbg:true,fnt:{f:'serif',s:16}});
+  var nein=test3.wdw.add({id:'nein',txt:'nein lol',x:'5%',y:'5%',w:'40%',h:'40%'});
+  test3.wdw.update(nein,'<div style="padding:4px;font:normal 24px/20px gothic;text-align:justify;background-color:#c01;color:#000">'+(new Array(64)).join('nein lol ')+'</div>');
   },false);
 </script>
 </head>
 <body>
-<div id="jswm1" style="width:60%;height:100%;float:left">Hello world.<br>Welcome to JSWM!</div>
-<div id="jswm2" style="width:40%;height:100%;float:left">TEST</div>
+<div id="jswm1" style="width:65%;height:100%;float:left">Hello world.<br>Welcome to JSWM!</div>
+<div id="jswm2" style="width:35%;height:100%;float:left"></div>
 </body>
 </html>
