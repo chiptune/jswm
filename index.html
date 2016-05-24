@@ -33,19 +33,24 @@ window.addEventListener('load',function()
   test1.vs.add(3,{txt:'bar'});
   var lol=test1.wdw.add({id:'lol',txt:'LOL',x:'1%',y:'91%',w:280,h:'8%',m:8});
   test1.wdw.insert(lol,'<div style="left:8px;top:8px;font:bold 32px/100% monospace;letter-spacing:-3px">LOL</div>');
-  var w1=test1.wdw.add({id:'BADGER',x:'45%',y:'5%',w:'50%',h:'40%',m:2});
-  var w2=test1.wdw.add({id:'\u03c0',x:-132,y:-38,w:128,h:34,m:4,hdr:false,rsz:false});
-  var w3=test1.wdw.add({id:'BLA',x:'55%',y:'55%',w:'40%',h:'30%',m:4});
-  test1.wdw.insert(w1,new Array(512).join('BADGER ')+'MUSHROOM MUSHROOM');
-  test1.wdw.insert(w2,'<div style="font:italic 24px/24px serif;letter-spacing:-1.5px">\u03c0 = '+String(test1.pi(128).toFixed(6))+'</div>');
-  test1.wdw.insert(w3,new Array(32).join('bla&nbsp;'));
+  var badger=test1.wdw.add({id:'BADGER',x:'45%',y:'10%',w:'30%',h:'40%',m:2});
+  test1.wdw.insert(badger,new Array(512).join('BADGER ')+'MUSHROOM MUSHROOM');
+  var bla=test1.wdw.add({id:'BLA',x:'55%',y:'55%',w:'40%',h:'30%',m:4});
+  test1.wdw.insert(bla,new Array(32).join('bla&nbsp;'));
+  test1.wdw.close('\u03c0');
+  var pi=test1.wdw.add({id:'\u03c0',x:-4,y:4,w:'auto',h:'auto',b:0,m:4,hdr:false,rsz:false});
+  test1.wdw.insert(pi,'<div style="font:italic 24px/24px serif;letter-spacing:-1.5px;white-space:nowrap">\u03c0 = '+String(test1.pi(128).toFixed(6))+'&nbsp;</div>');
+  test1.wdw.style(pi,'backgroundColor','#268');
+  test1.wdw.style(pi,'color','#8ce');
   test2=new jswm({root:'jswm2',m:4,b:2,r:4,fnt:{f:'helvetica,sans-serif',s:12},sav:false,bgd:false});
   //test2.vs.toggle(1);
   test2.ico.add({tt:'test',x:'2%',y:'96%'});
-  var w4=test2.wdw.add({id:'w4',txt:'jswm inception',x:'5%',y:'5%',w:'90%',h:'90%',e:{rsz:function(){jswm.rsz(jswm.get('jswm3'));}}});
-  test3=new jswm({id:'jswm3',root:w4+'-bgd',r:2,dbg:true,fnt:{f:'serif',s:16}});
+  var w4=test2.wdw.add({id:'w4',txt:'jswm inception',x:'7%',y:'7%',w:'86%',h:'86%',e:{rsz:function(){jswm.rsz(jswm.get('jswm3'));}}});
+  test3=new jswm({id:'jswm3',root:w4+'-bgd',r:2,dbg:true,fnt:{f:'serif',s:16},stg:{m:4,n:9}});
   var nein=test3.wdw.add({id:'nein',txt:'nein lol',x:'5%',y:'5%',w:'40%',h:'40%'});
-  test3.wdw.insert(nein,'<div style="padding:4px;font:normal 24px/20px gothic;text-align:justify;background-color:#c01;color:#000">'+(new Array(64)).join('nein lol ')+'</div>');
+  test3.wdw.insert(nein,'<div style="padding:4px;font:normal 24px/20px gothic;text-align:justify">'+(new Array(64)).join('nein lol ')+'</div>');
+  test3.wdw.style(nein,'backgroundColor','#c01');
+  test3.wdw.style(nein,'color','#000');
   },false);
 </script>
 </head>
