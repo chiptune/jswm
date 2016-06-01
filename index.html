@@ -1,13 +1,10 @@
 <!doctype html>
 <html lang="en">
-<!--
- /\______  /\______  ____/\______     __
- \____   \/  \__   \/  _ \____   \ __/  \____
-  / _/  _/    \/   /   /  / _/  _// / / / / /
- /  \   \  /\ /   /\  /  /  \   \/ /\  / / /
- \__/\   \/RTX______\___/\__/\   \/ / /_/_/
-      \___)   \__)            \___) \/
--->
+<!-- o. .o$00$o .o   o. .o. .o.
+     0$ $0(     $0   0$ $0$ $0$
+    .00 `$00$o. 00.o.00 00°$°00
+o. .o0$     )0$ $0$°$0$ $0   0$
+`$000$' °$000$' `$' `$' `0   0' -->
 <head>
 <title>jswm</title>
 <meta http-equiv="content-type" content="text/html;charset=utf-8">
@@ -16,21 +13,20 @@
 <meta name="robots" content="nofollow noindex noarchive">
 <style type="text/css">
 @font-face {font-family:bitmap;src:url('liquid_kidz.ttf') format('truetype');font-weight:normal;font-style:normal;font-smooth:never}
-/*@font-face {font-family:bitmap;src:url('press_start_2p.ttf') format('truetype');font-weight:normal;font-style:normal;font-smooth:never}*/
 @font-face {font-family:gothic;src:url('luftwaffe.ttf') format('truetype');font-weight:normal;font-style:normal}
 html {width:100%;height:100%;overflow:hidden}
 body {margin:0px;padding:0px;background-color:#0f0;width:100%;height:100%}
 </style>
 <script type="application/javascript" src="jswm.js" id="code"></script>
-<!--<script type="application/javascript" src="jswm.min.js"></script>-->
 <script type="application/javascript" src="jslint.js"></script>
 <script type="application/javascript">
 var test1,test2,test3;
 window.addEventListener('load',function()
   {
-  test1=new jswm({id:'test',root:'jswm1',fnt:{f:'bitmap,monospace'},stg:false,dbg:true});
+  test1=new jswm({id:'test',root:'jswm1',snp:false,dbg:true});
   test1.vs.add(2,{txt:'foo'});
   test1.vs.add(3,{txt:'bar'});
+  test1.vs.toggle(1);
   var lol=test1.wdw.add({id:'lol',txt:'LOL',x:'1%',y:'91%',w:280,h:'8%',m:8});
   test1.wdw.insert(lol,'<div style="left:8px;top:8px;font:bold 32px/100% monospace;letter-spacing:-3px">LOL</div>');
   var badger=test1.wdw.add({id:'BADGER',x:'45%',y:'10%',w:'30%',h:'40%',m:2});
@@ -47,7 +43,7 @@ window.addEventListener('load',function()
   test2.ico.add({tt:'test',x:'2%',y:'96%'});
   var w4=test2.wdw.add({id:'w4',txt:'jswm inception',x:'7%',y:'7%',w:'86%',h:'86%',e:{rsz:function(){jswm.rsz(jswm.get('jswm3'));}}});
   test3=new jswm({id:'jswm3',root:w4+'-bgd',r:2,dbg:true,fnt:{f:'serif',s:16},stg:{m:4,n:9}});
-  var nein=test3.wdw.add({id:'nein',txt:'nein lol',x:'5%',y:'5%',w:'40%',h:'40%'});
+  var nein=test3.wdw.add({id:'nein',txt:'nein lol',x:'25%',y:'2%',w:'50%',h:'50%'});
   test3.wdw.insert(nein,'<div style="padding:4px;font:normal 24px/20px gothic;text-align:justify">'+(new Array(64)).join('nein lol ')+'</div>');
   test3.wdw.style(nein,'backgroundColor','#c01');
   test3.wdw.style(nein,'color','#000');
