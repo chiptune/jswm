@@ -1,4 +1,7 @@
 #JSWM
-simple and fast javascript window manager
+onefile javascript window manager with no dependencies
 
-![jswm](http://www.lol.pm/jswm/jswm64.png) [online demo](http://lol.pm/jswm)
+![icon](http://www.lol.pm/jswm/jswm16.png) [online demo](http://lol.pm/jswm)
+
+here is a preview with three JSWM instances at same time, the third one inside the second one :)
+![screenshot](http://www.lol.pm/jswm/jswm.png)
